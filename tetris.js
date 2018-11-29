@@ -58,21 +58,24 @@ var lastTime = 0;
 var blockDrop = 0;
 var dropInterval = 1000;
 
+function drop(){
+	player.pos.y++;
+	blockDrop = 0;
+}
+
+
 document.addEventListener('keydown', event => {
 	if(event.keyCode === UP){
 		// rotate
 	}
 	else if(event.keyCode === DOWN){
-		player.pos.y++;
-		blockDrop = 0;
+		drop();
 	}
 	else if(event.keyCode === LEFT){
 		player.pos.x--;
-		blockDrop = 0;
 	}
 	else if(event.keyCode === RIGHT){
 		player.pos.x++;
-		blockDrop = 0;
 	}
 
 })
@@ -94,8 +97,6 @@ function drawShape(matrix, offset, colour){
 	});
 }
 
-
-
 function update(time = 0){
 	const timeChange = time - lastTime;
 	lastTime = time;
@@ -104,8 +105,7 @@ function update(time = 0){
 
 	blockDrop += timeChange;
 	if(blockDrop > dropInterval){
-		player.pos.y++;
-		blockDrop = 0;
+		drop();
 	}
 
 	
