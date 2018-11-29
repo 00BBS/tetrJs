@@ -2,8 +2,7 @@ const canv = document.getElementById("tetrjs");
 const context = canv.getContext("2d");
 
 context.scale(20, 20);
-context.fillStyle = '#000';
-context.fillRect(0, 0, canv.width, canv.height);
+
 
 
 const T = [
@@ -47,6 +46,17 @@ const I = [
 	[0,1,0],
 ];
 
+const player = {
+	pos: {x : 5, y : 5},
+	matrix: I
+}
+
+function draw(){
+	context.fillStyle = '#000';
+	context.fillRect(0, 0, canv.width, canv.height);
+	drawShape(player.matrix, player.pos, "orange");
+}
+
 function drawShape(matrix, offset, colour){
 	matrix.forEach((row, y) => {
 		row.forEach((value, x) =>{
@@ -58,5 +68,23 @@ function drawShape(matrix, offset, colour){
 	});
 }
 
+var lastTime = 0;
+var blockDrop = 0;
+var dropInterval = 1000;
 
-drawShape(L, {x: 5, y: 5}, "blue");
+function update(time = 0){
+	const timeChange = time - lastTime;
+	lastTime = time;
+	// constantly calls draw
+	console.log(timeChange)
+
+	blockDrop += timeChange;
+	if(blockDrop > dropInterval){
+		player.pos.y++;
+		blockDrop = 0;
+	}
+	draw();
+	requestAnimationFrame(update);
+}
+
+update();
