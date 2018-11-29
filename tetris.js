@@ -67,8 +67,10 @@ function drop(){
 document.addEventListener('keydown', event => {
 	if(event.keyCode === UP){
 		// rotate
+		event.preventDefault();
 	}
 	else if(event.keyCode === DOWN){
+		event.preventDefault();
 		drop();
 	}
 	else if(event.keyCode === LEFT){
