@@ -47,7 +47,7 @@ const I = [
 ];
 
 const player = {
-	pos: {x : 5, y : 5},
+	pos: {x : 4, y : 5},
 	matrix: I
 }
 
@@ -83,6 +83,8 @@ function update(time = 0){
 		player.pos.y++;
 		blockDrop = 0;
 	}
+
+	
 	draw();
 	requestAnimationFrame(update);
 }
