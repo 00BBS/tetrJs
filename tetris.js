@@ -8,50 +8,9 @@ const DOWN = 40;
 const LEFT = 37;
 const RIGHT = 39;
 
-const T = [
-	[0,0,0],
-	[1,1,1],
-	[0,1,0],
-];
-
-const O = [
-	[1,1],
-	[1,1],
-];
-
-const L = [
-	[0,1,0],
-	[0,1,0],
-	[0,1,1],
-];
-
-const J = [
-	[0,1,0],
-	[0,1,0],
-	[1,1,0],
-];
-
-const Z = [
-	[0,0,0],
-	[1,1,0],
-	[0,1,1],
-];
-
-const S = [
-	[0,0,0],
-	[0,1,1],
-	[1,1,0],
-];
-
-const I = [
-	[0,1,0],
-	[0,1,0],
-	[0,1,0],
-];
-
 const player = {
 	pos: {x : 4, y : 5},
-	matrix: I
+	matrix: createBlock("I")
 }
 // map size: 12 * 20 = 240, 20*20 = 400 === original tetrjs canvas size
 const map = drawMatrix(12,20);
@@ -60,6 +19,16 @@ var lastTime = 0;
 var blockDrop = 0;
 var dropInterval = 1000;
 
+const colours =  [
+  null,
+  'purple',
+  'yellow',
+  'orange',
+  'blue',
+  'aqua',
+  'green',
+  'red'
+];
 
 
 document.addEventListener('keydown', event => {
@@ -94,12 +63,64 @@ function collision(map, player){
 	return false;
 }
 
+function createBlock(type){
+	if(type === 'T'){
+		return [
+			[0,0,0],
+			[1,1,1],
+			[0,1,0],
+		];
+	}
+	if(type === 'O'){
+		return [
+			[2,2],
+			[2,2],
+		];
+	}
+	if(type === 'S'){
+		return [
+			[0,0,0],
+			[0,3,3],
+			[3,3,0],
+		];
+	}
+	if(type === 'Z'){
+		return [
+			[0,0,0],
+			[4,4,0],
+			[0,4,4],
+		];
+	}
+	if(type === 'J'){
+		return [
+			[0,5,0],
+			[0,5,0],
+			[5,5,0],
+		];
+	}
+	if(type === 'L'){
+		return [
+			[0,6,0],
+			[0,6,0],
+			[0,6,6],
+		];
+	}
+	if(type === 'I'){
+		return [
+			[0,7,0,0],
+			[0,7,0,0],
+			[0,7,0,0],
+			[0,7,0,0],
+		];
+	}
+}
+
 function drop(){
 	player.pos.y++;
 	if(collision(map, player) === true){
 		player.pos.y--;
 		mergeMatrix(map, player);
-		player.pos.y = 0;
+		playerReset();
 	}
 	blockDrop = 0;
 }
@@ -114,10 +135,16 @@ function drawShape(matrix, offset){
 	matrix.forEach((row, y) => {
 		row.forEach((value, x) =>{
 			if(value !== 0){
-				context.fillStyle = "orange";
+				context.fillStyle = colours[value];
 				context.fillRect(x + offset.x, y + offset.y, 1, 1);
 			}
 		});
+	});
+}
+// reset map function
+function mapReset(){
+	map.forEach(row => {
+		row.fill(0);
 	});
 }
 
@@ -151,9 +178,25 @@ function playerHShift(direction){
 	}
 }
 
+
+function playerReset(){
+	const blocks = "ILJOTSZ";
+	var rand = Math.floor(Math.random() * 6) + 1;
+	player.matrix = createBlock(blocks[rand]);
+	player.pos = {x: 5, y: 0};
+	// check if top has been reached
+	if(collision(map, player)){
+		mapReset();
+	}
+}
+
 // transpose, then reverse rows of new matrix
 function rotation(matrix, dir){
-	for()
+	for(let y = 0; y < matrix.length; ++y){
+		for(let x = 0; x < y; ++x){
+
+		}
+	}
 }
 
 function update(time = 0){
