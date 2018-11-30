@@ -143,7 +143,7 @@ function mergeMatrix(map, player){
 	});
 }
 
-
+// horizontal player shift
 function playerHShift(direction){
 	player.pos.x += direction;
 	if(collision(map, player) === true){
@@ -151,6 +151,10 @@ function playerHShift(direction){
 	}
 }
 
+// transpose, then reverse rows of new matrix
+function rotation(matrix, dir){
+	for()
+}
 
 function update(time = 0){
 	const timeChange = time - lastTime;
