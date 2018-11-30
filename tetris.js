@@ -53,65 +53,117 @@ const player = {
 	pos: {x : 4, y : 5},
 	matrix: I
 }
+// map size: 12 * 20 = 240, 20*20 = 400 === original tetrjs canvas size
+const map = drawMatrix(12,20);
 
 var lastTime = 0;
 var blockDrop = 0;
 var dropInterval = 1000;
 
-function drop(){
-	player.pos.y++;
-	blockDrop = 0;
-}
 
 
 document.addEventListener('keydown', event => {
+	event.preventDefault();
 	if(event.keyCode === UP){
 		// rotate
-		event.preventDefault();
+
 	}
 	else if(event.keyCode === DOWN){
-		event.preventDefault();
 		drop();
 	}
 	else if(event.keyCode === LEFT){
-		player.pos.x--;
+		playerHShift(-1);
 	}
 	else if(event.keyCode === RIGHT){
-		player.pos.x++;
+		playerHShift(1);
 	}
 
 })
 
+function collision(map, player){
+	const [m, o] = [player.matrix, player.pos];
+	// iterate along each row
+	for(let y = 0; y < m.length; ++y){
+		for(let x = 0; x < m[y].length; ++x){
+			// if the value of the shape is not 0 and the map exists at that location and is not 0, collide
+			if(m[y][x] !== 0 && ((map[y+o.y] && (map[y + o.y][x + o.x])) !== 0)){
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
+function drop(){
+	player.pos.y++;
+	if(collision(map, player) === true){
+		player.pos.y--;
+		mergeMatrix(map, player);
+		player.pos.y = 0;
+	}
+	blockDrop = 0;
+}
+
 function draw(){
 	context.fillStyle = '#000';
 	context.fillRect(0, 0, canv.width, canv.height);
-	drawShape(player.matrix, player.pos, "orange");
+	drawShape(player.matrix, player.pos);
 }
 
-function drawShape(matrix, offset, colour){
+function drawShape(matrix, offset){
 	matrix.forEach((row, y) => {
 		row.forEach((value, x) =>{
 			if(value !== 0){
-				context.fillStyle = colour;
+				context.fillStyle = "orange";
 				context.fillRect(x + offset.x, y + offset.y, 1, 1);
 			}
 		});
 	});
 }
 
+function drawMatrix(w, h){
+	const matrix = [];
+	while(h > 0){
+		h--;
+		// for each row, fill the matrix array with a new array of 0's of width w
+		matrix.push(new Array(w).fill(0))
+	}
+	return matrix;
+}
+
+function mergeMatrix(map, player){
+	player.matrix.forEach((row, y) => {
+		row.forEach((value, x) => {
+			if(value !== 0){ 
+				// copy the value of the player matrix or shape into the map
+				// [row][column]
+				map[y + player.pos.y][x + player.pos.x] = value;
+			}
+		});
+	});
+}
+
+
+function playerHShift(direction){
+	player.pos.x += direction;
+	if(collision(map, player) === true){
+		player.pos.x -= direction;
+	}
+}
+
+
 function update(time = 0){
 	const timeChange = time - lastTime;
 	lastTime = time;
-	// constantly calls draw
-	console.log(timeChange)
-
 	blockDrop += timeChange;
 	if(blockDrop > dropInterval){
 		drop();
 	}
 
-	
+	// constantly calls draw to update the game
 	draw();
+	// draw the updated map
+	drawShape(map, {x:0, y:0});
 	requestAnimationFrame(update);
 }
 
