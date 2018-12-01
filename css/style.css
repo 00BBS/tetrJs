@@ -1,6 +1,7 @@
 #tetrjs {
     padding-left: 0;
     padding-right: 0;
+    height: 65vh;
     margin-left: auto;
     margin-right: auto;
     display: block;
@@ -8,7 +9,7 @@
 }
 
 #logo{
-	top: -150px;
+	top: -275px;
 	position: relative;
 	padding-left: 0;
     padding-right: 0;

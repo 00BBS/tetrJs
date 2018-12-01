@@ -126,6 +126,7 @@ function drop(){
 		player.pos.y--;
 		mergeMatrix(map, player);
 		playerReset();
+		rowClean();
 	}
 	blockDrop = 0;
 }
@@ -253,7 +254,18 @@ function rotation(matrix, dir){
 }
 
 function rowClean(){
-	
+	outer: for(let y = map.length - 1; y > 0; --y){
+		for(let x = 0; x < map[y].length; ++x){
+			if(map[y][x] === 0){
+				continue outer;
+			}
+		}
+		// splice of length one, immediately access the first spliced element, and fill with 0.
+		const row = map.splice(y, 1)[0].fill(0);
+		// push everything down
+		map.unshift(row);
+		++y;
+	}
 }
 
 function update(time = 0){
