@@ -11,7 +11,9 @@ const X = 88;
 
 const player = {
 	pos: {x : 4, y : 5},
-	matrix: createBlock("T")
+	matrix: null,
+	score: 0,
+	highScore: 0,
 }
 // map size: 12 * 20 = 240, 20*20 = 400 === original tetrjs canvas size
 const map = drawMatrix(12,20);
@@ -24,11 +26,11 @@ const colours =  [
   null,
   'purple',
   'yellow',
-  'orange',
-  'blue',
   'aqua',
   'green',
-  'red'
+  'orange',
+  'red',
+  'blue'
 ];
 
 var lastKey = -1;
@@ -127,6 +129,8 @@ function drop(){
 		mergeMatrix(map, player);
 		playerReset();
 		rowClean();
+		updateScore();
+		updateHighScore();
 	}
 	blockDrop = 0;
 }
@@ -171,9 +175,12 @@ function mergeMatrix(map, player){
 				// copy the value of the player matrix or shape into the map
 				// [row][column]
 				map[y + player.pos.y][x + player.pos.x] = value;
+				player.score += value;
 			}
 		});
 	});
+	updateScore();
+	updateHighScore();
 }
 
 // horizontal player shift
@@ -195,6 +202,8 @@ function playerReset(){
 	// check if top has been reached
 	if(collision(map, player)){
 		mapReset();
+		// reset score
+		player.score = 0;
 	}
 }
 
@@ -254,6 +263,7 @@ function rotation(matrix, dir){
 }
 
 function rowClean(){
+	let rowCount = 1;
 	outer: for(let y = map.length - 1; y > 0; --y){
 		for(let x = 0; x < map[y].length; ++x){
 			if(map[y][x] === 0){
@@ -265,6 +275,8 @@ function rowClean(){
 		// push everything down
 		map.unshift(row);
 		++y;
+		player.score += rowCount * 250;
+		rowCount *= 2;
 	}
 }
 
@@ -283,4 +295,18 @@ function update(time = 0){
 	requestAnimationFrame(update);
 }
 
+function updateScore(){
+	document.getElementById("score").innerText = player.score;
+}
+
+function updateHighScore(){
+	if(player.score > player.highScore){
+		player.highScore = player.score;
+	}
+	document.getElementById("score1").innerText = player.highScore;
+}
+
+playerReset();
+updateScore();
+updateHighScore();
 update();
