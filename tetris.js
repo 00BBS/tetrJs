@@ -7,10 +7,11 @@ const UP = 38;
 const DOWN = 40;
 const LEFT = 37;
 const RIGHT = 39;
+const X = 88;
 
 const player = {
 	pos: {x : 4, y : 5},
-	matrix: createBlock("I")
+	matrix: createBlock("T")
 }
 // map size: 12 * 20 = 240, 20*20 = 400 === original tetrjs canvas size
 const map = drawMatrix(12,20);
@@ -30,12 +31,12 @@ const colours =  [
   'red'
 ];
 
+var lastKey = -1;
 
 document.addEventListener('keydown', event => {
 	event.preventDefault();
 	if(event.keyCode === UP){
-		// rotate
-
+		playerRotate();
 	}
 	else if(event.keyCode === DOWN){
 		drop();
@@ -45,6 +46,10 @@ document.addEventListener('keydown', event => {
 	}
 	else if(event.keyCode === RIGHT){
 		playerHShift(1);
+	}
+	else if(event.keyCode === X){
+		player.pos = {x: 5, y: 5};
+		mapReset();
 	}
 
 })
@@ -181,7 +186,9 @@ function playerHShift(direction){
 
 function playerReset(){
 	const blocks = "ILJOTSZ";
-	var rand = Math.floor(Math.random() * 6) + 1;
+	var rand = Math.floor(Math.random() * 6);
+	// set lastKey to -1, to restart rotation cycle
+	lastKey = -1; 
 	player.matrix = createBlock(blocks[rand]);
 	player.pos = {x: 5, y: 0};
 	// check if top has been reached
@@ -190,13 +197,63 @@ function playerReset(){
 	}
 }
 
+function playerRotate(){
+	// rotate
+
+	console.log("last key ===" + lastKey);
+	if(lastKey !== UP){
+		console.log("here1");
+		rotation(player.matrix, 1);
+		lastKey = UP;
+	}
+	else if(lastKey === UP){
+		console.log("here2");
+		rotation(player.matrix, -1);
+		lastKey = -1;
+	}
+	rotateCollide();
+}
+
+function rotateCollide(){
+	const playerPos = player.pos.x;
+	let offset = -1;
+
+	while(collision(map, player)){
+		player.pos.x += offset;
+		offset = -(offset + (offset > 0 ? 1 : -1));
+		if(offset > player.matrix[0].length){
+			rotation(player.matrix, -1);
+			player.pos.x = playerPos;
+			return;
+		}
+	}
+}
+
 // transpose, then reverse rows of new matrix
 function rotation(matrix, dir){
 	for(let y = 0; y < matrix.length; ++y){
 		for(let x = 0; x < y; ++x){
-
+			[
+				matrix[x][y],
+				matrix[y][x],
+			] = [
+				matrix[y][x],
+				matrix[x][y],
+			];
 		}
 	}
+	if(dir < 0){
+		matrix.reverse;
+	}
+	else{
+		matrix.forEach(row => {
+			row.reverse();
+		});
+	}
+}
+
+function rowClean(){
+	
 }
 
 function update(time = 0){
