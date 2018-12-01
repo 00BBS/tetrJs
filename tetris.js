@@ -50,7 +50,9 @@ document.addEventListener('keydown', event => {
 		playerHShift(1);
 	}
 	else if(event.keyCode === X){
-		player.pos = {x: 5, y: 5};
+		player.pos = {x: 5, y: 0};
+		player.score = 0;
+		updateScore();
 		mapReset();
 	}
 
