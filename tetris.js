@@ -21,6 +21,7 @@ const map = drawMatrix(12,20);
 var lastTime = 0;
 var blockDrop = 0;
 var dropInterval = 1000;
+var baseScore = 1000;
 
 const colours =  [
   null,
@@ -132,6 +133,7 @@ function drop(){
 		playerReset();
 		rowClean();
 		updateScore();
+		updateDrop();
 		updateHighScore();
 	}
 	blockDrop = 0;
@@ -183,6 +185,7 @@ function mergeMatrix(map, player){
 	});
 	updateScore();
 	updateHighScore();
+	updateDrop();
 }
 
 // horizontal player shift
@@ -196,7 +199,8 @@ function playerHShift(direction){
 
 function playerReset(){
 	const blocks = "ILJOTSZ";
-	var rand = Math.floor(Math.random() * 6);
+	var rand = Math.floor(Math.random() * 7);
+	console.log(rand);
 	// set lastKey to -1, to restart rotation cycle
 	lastKey = -1; 
 	player.matrix = createBlock(blocks[rand]);
@@ -296,6 +300,14 @@ function update(time = 0){
 	drawShape(map, {x:0, y:0});
 	requestAnimationFrame(update);
 }
+// increase speed of drop when score is reached
+function updateDrop(){
+	if(player.score > baseScore){
+		baseScore *= 2;
+		dropInterval /= 2;
+	}
+}
+
 
 function updateScore(){
 	document.getElementById("score").innerText = player.score;
@@ -311,4 +323,5 @@ function updateHighScore(){
 playerReset();
 updateScore();
 updateHighScore();
+updateDrop();
 update();
