@@ -18,21 +18,7 @@
     display: block;
 }
 
-#score{
-	color: #FFFFFF;
-	font-family: sans-serif;
-	text-align: center;
-	font-size: 2em;
-}
-
-#score1{
-	color: #FFFFFF;
-	font-family: sans-serif;
-	text-align: center;
-	font-size: 2em;
-}
-
-#highScore{
+#score, #highScore, #score1{
 	color: #FFFFFF;
 	font-family: sans-serif;
 	text-align: center;
