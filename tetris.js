@@ -210,6 +210,7 @@ function playerReset(){
 		mapReset();
 		// reset score
 		player.score = 0;
+		dropInterval = 1000;
 	}
 }
 
